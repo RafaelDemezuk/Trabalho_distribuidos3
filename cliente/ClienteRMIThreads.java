@@ -3,7 +3,7 @@ package cliente;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import interfaces.BlackJack21;
+import interfaces.BlackJack21Imp;
 import java.util.Scanner;
 
 public class ClienteRMIThreads implements Runnable {
@@ -14,7 +14,7 @@ public class ClienteRMIThreads implements Runnable {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             String nomeDoServico = "JOGAR";
 
-            BlackJack21 servicoRemoto = (BlackJack21) registry.lookup(nomeDoServico);
+            BlackJack21Imp servicoRemoto = (BlackJack21Imp) registry.lookup(nomeDoServico);
 
             System.out.println("[CLIENTE] Conectado ao serviço remoto: " + nomeDoServico);
 
