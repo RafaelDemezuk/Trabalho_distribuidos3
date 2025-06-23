@@ -3,28 +3,64 @@ package cliente;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import interfaces.OlaMundoRMI;
+import interfaces.BlackJack21;
+import java.util.Scanner;
 
 public class ClienteRMIThreads implements Runnable {
 
-	@Override
-	public void run() {
-		try {
-            // 1. Localiza o RMI Registry na máquina onde o servidor está rodando
-            // "localhost" significa que o cliente está na mesma máquina do servidor.
-            // Se o servidor estiver em outra máquina, troque por seu IP ou hostname.
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099); // Porta padrão do RMI é 1099
-            
-            // 2. Nome do serviço que o servidor registrou no RMI Registry
-            // Esse nome deve ser exatamente o mesmo usado pelo servidor no bind()
-            String nomeDoServico = "ServicoOlaMundo";
+    @Override
+    public void run() {
+        try {
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            String nomeDoServico = "JOGAR";
 
-            // 3. Faz a busca (lookup) do serviço remoto no registry
-            // O resultado é um stub — um objeto proxy que representa o objeto remoto localmente
-            OlaMundoRMI servicoRemoto = (OlaMundoRMI) registry.lookup(nomeDoServico);
+            BlackJack21 servicoRemoto = (BlackJack21) registry.lookup(nomeDoServico);
 
-            // 4. Invoca o método remoto através do stub
-            String resposta = servicoRemoto.dizerOla(); // Chamada é feita pela rede ao servidor
+            System.out.println("[CLIENTE] Conectado ao serviço remoto: " + nomeDoServico);
+
+            Scanner scanner = new Scanner(System.in);
+
+            String opcaoInicial;
+
+            do {
+                System.out.println("-".repeat(10) + "Menu Principal" + "-".repeat(10));
+                System.out.println("\n[1] JOGAR\n[2] SAIR\n" + "-".repeat(10));
+                opcaoInicial = scanner.nextLine().trim().toUpperCase();
+
+                switch (opcaoInicial) {
+                    case "1":
+                        String comandoJogo;
+                        do {
+                            System.out.println("-".repeat(10) + "Menu do Jogo" + "-".repeat(10));
+                            System.out.println("\n[1] HIT\n[2] STAND\n[3] VOLTAR AO MENU PRINCIPAL\n" + "-".repeat(10));
+                            comandoJogo = scanner.nextLine().trim().toUpperCase();
+
+                            switch (comandoJogo) {
+                                case "1":
+                                    servicoRemoto.Hit();
+                                    break;
+                                case "2":
+                                    servicoRemoto.Stand();
+                                    break;
+                                case "3":
+                                    System.out.println("[CLIENTE] Voltando ao menu principal...");
+                                    break;
+                                default:
+                                    System.out.println("[CLIENTE] Comando inválido!");
+                            }
+                        } while (!comandoJogo.equals("3") && !comandoJogo.equals("VOLTAR"));
+                        break;
+
+                    case "2":
+                        System.out.println("[CLIENTE] Saindo...");
+                        break;
+
+                    default:
+                        System.out.println("[CLIENTE] Opção inválida!");
+                }
+            } while (!opcaoInicial.equals("2") && !opcaoInicial.equals("SAIR"));
+
+            scanner.close();
 
             // 5. Exibe a resposta retornada pelo servidor
             System.out.println("[CLIENTE] Resposta recebida do servidor: '" + resposta + "'");
@@ -34,13 +70,13 @@ public class ClienteRMIThreads implements Runnable {
             System.err.println("[CLIENTE] Exceção no cliente: " + e.getMessage());
             e.printStackTrace();
         }
-	}
-	
-	public static void main(String[] args) {
-		 for(int i = 0; i < 5; i++) {
-			 Thread t = new Thread(new ClienteRMIThreads());
-			 t.start();
-		 }
-	}
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 5; i++) {
+            Thread t = new Thread(new ClienteRMIThreads());
+            t.start();
+        }
+    }
 
 }
