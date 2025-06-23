@@ -7,4 +7,6 @@ import java.rmi.RemoteException;
 public interface BlackJack21 extends Remote {
 	// 2. Cada método que pode ser chamado remotamente DEVE declarar RemoteException
 	Carta Hit() throws RemoteException;
+
+	void Stand() throws RemoteException;
 }
