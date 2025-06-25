@@ -1,6 +1,8 @@
 package entidades;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import interfaces.Baralho;
 
@@ -76,7 +78,19 @@ public class BaralhoImp implements Baralho {
 
             baralho.add(new CartaImp(naipe, valor, simbolo));
         } 
-    }
 
-    
+
+        @Override
+        public CartaImp compra() {
+            if (baralho.isEmpty()) {
+                return null; // Retorna null se o baralho estiver vazio
+            }
+            return baralho.remove(baralho.size() - 1); // Remove e retorna a última carta do baralho
+        }
+
+        @Override
+        public void embaralhar() {
+            Collections.shuffle(baralho); // Embaralha o baralho usando o método shuffle da classe Collections
+        }
+    }    
 }
