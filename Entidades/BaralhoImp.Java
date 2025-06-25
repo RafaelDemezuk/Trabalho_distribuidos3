@@ -11,7 +11,7 @@ import entidades.CartaImp;
 
 public class BaralhoImp implements Baralho {
     private ArrayList<CartaImp> baralho= new ArrayList();
-
+    
     public BaralhoImp() {
         for(int i=0;i<52;i++){
             String naipe;
@@ -78,8 +78,8 @@ public class BaralhoImp implements Baralho {
 
             baralho.add(new CartaImp(naipe, valor, simbolo));
         } 
-
-
+    }   
+    
         @Override
         public CartaImp compra() {
             if (baralho.isEmpty()) {
@@ -91,6 +91,5 @@ public class BaralhoImp implements Baralho {
         @Override
         public void embaralhar() {
             Collections.shuffle(baralho); // Embaralha o baralho usando o método shuffle da classe Collections
-        }
-    }    
+        } 
 }

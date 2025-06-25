@@ -1,6 +1,7 @@
 package interfaces;
-
+import entidades.CartaImp;
 public interface Baralho {
-    public Carta compra();
+    
+    public CartaImp compra();
     public void embaralhar();
 }

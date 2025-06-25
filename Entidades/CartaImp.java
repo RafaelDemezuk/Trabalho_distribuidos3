@@ -6,12 +6,8 @@ import java.io.Serializable;
 public class CartaImp implements Carta, Serializable {
     private String naipe;
     private int valor;
-    private char simbolo;
-
-    public CartaImp() {
-    }
-
-    public CartaImp(String naipe, int valor, char simbolo) {
+    private String simbolo;
+    public CartaImp(String naipe, int valor, String simbolo) {
         this.naipe = naipe;
         this.valor = valor;
         this.simbolo = simbolo;
@@ -28,7 +24,7 @@ public class CartaImp implements Carta, Serializable {
     }
 
     @Override
-    public char getSimbolo() {
+    public String getSimbolo() {
         return simbolo;
     }
 }
