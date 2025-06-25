@@ -1,8 +1,6 @@
 package servidor;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-
 import interfaces.BlackJack21;
 import entidades.CartaImp;
 import entidades.BaralhoImp;
@@ -14,16 +12,11 @@ public class BlackJack21RMIImpl implements BlackJack21 {
     @Override
     public CartaImp hit() throws RemoteException {
         // 5. Lógica do jogo: compra uma carta do baralho
-        try {
-            baralho.embaralhar(); // Embaralha o baralho antes de comprar uma carta
-            CartaImp carta = baralho.compra(); // Compra uma carta do baralho
-            if (carta == null) {
-                throw new RemoteException("Baralho vazio, não há cartas para comprar.");
-            }
-        } catch (Exception e) {
-            throw new RemoteException("Erro ao embaralhar o baralho: " + e.getMessage());
+        CartaImp carta = baralho.compra();
+        if (carta == null) {
+            throw new RemoteException("Baralho vazio, não é possível comprar mais cartas.");
         }
-
+        return carta;
     }
 
     @Override
