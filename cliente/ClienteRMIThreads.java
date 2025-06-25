@@ -1,9 +1,8 @@
 package cliente;
 
+import interfaces.BlackJack21;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
-import interfaces.BlackJack21Imp;
 import java.util.Scanner;
 
 public class ClienteRMIThreads implements Runnable {
@@ -12,19 +11,15 @@ public class ClienteRMIThreads implements Runnable {
     public void run() {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            String nomeDoServico = "JOGAR";
 
-            BlackJack21Imp servicoRemoto = (BlackJack21Imp) registry.lookup(nomeDoServico);
-
-            System.out.println("[CLIENTE] Conectado ao serviço remoto: " + nomeDoServico);
+            BlackJack21 servicoRemoto = (BlackJack21) registry.lookup("21");
 
             Scanner scanner = new Scanner(System.in);
-
             String opcaoInicial;
 
             do {
                 System.out.println("-".repeat(10) + "Menu Principal" + "-".repeat(10));
-                System.out.println("\n[1] JOGAR\n[2] SAIR\n" + "-".repeat(10));
+                System.out.println("\n[1] JOGAR \n[2] SAIR \n" + "-".repeat(10));
                 opcaoInicial = scanner.nextLine().trim().toUpperCase();
 
                 switch (opcaoInicial) {
@@ -62,11 +57,7 @@ public class ClienteRMIThreads implements Runnable {
 
             scanner.close();
 
-            // 5. Exibe a resposta retornada pelo servidor
-            System.out.println("[CLIENTE] Resposta recebida do servidor: '" + resposta + "'");
-
         } catch (Exception e) {
-            // Trata qualquer erro de comunicação ou lookup
             System.err.println("[CLIENTE] Exceção no cliente: " + e.getMessage());
             e.printStackTrace();
         }
