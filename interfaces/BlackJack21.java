@@ -1,5 +1,6 @@
 package interfaces;
-
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import entidades.CartaImp;
