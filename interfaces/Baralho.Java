@@ -3,5 +3,5 @@ import entidades.CartaImp;
 public interface Baralho {
     
     public CartaImp compra();
-    public void embaralhar();
+
 }

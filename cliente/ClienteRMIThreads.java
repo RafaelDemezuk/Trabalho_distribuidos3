@@ -3,7 +3,7 @@ package cliente;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import interfaces.BlackJack21Imp;
+import interfaces.BlackJack21;
 import java.util.Scanner;
 
 public class ClienteRMIThreads implements Runnable {
