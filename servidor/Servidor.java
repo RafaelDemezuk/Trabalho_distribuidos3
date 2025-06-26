@@ -1,15 +1,14 @@
 package servidor;
 
 import interfaces.BlackJack21;
-import interfaces.ServicoCallBack;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class Servidor {
     public static void main(String[] args) {
         try {
-            ServicoCallBack servico = new ServicoImpl();
-            BlackJack21 blackjackService = new BlackJack21RMIImpl();
+            ServicoImpl servico = new ServicoImpl();
+            BlackJack21 blackjackService = new BlackJack21RMIImpl(servico);
             
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind("ServidorCallBack", servico);

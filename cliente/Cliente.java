@@ -1,5 +1,6 @@
 package cliente;
 
+import entidades.CartaImp;
 import interfaces.BlackJack21;
 import interfaces.ClienteCallBack;
 import interfaces.ServicoCallBack;
@@ -38,7 +39,12 @@ public class Cliente implements Runnable {
 
                             switch (comandoJogo) {
                                 case "1":
-                                    servicoBlackJack.hit();
+                                    try {
+                                        CartaImp carta = servicoBlackJack.hit();
+                                        System.out.println("[CLIENTE] Carta recebida: " + carta.toString());
+                                    } catch (Exception e) {
+                                        System.err.println("[CLIENTE] Erro ao comprar carta: " + e.getMessage());
+                                    }
                                     break;
                                 case "2":
                                     servicoBlackJack.stand();

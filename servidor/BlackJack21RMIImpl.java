@@ -8,9 +8,11 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack21 {
     BaralhoImp baralho = new BaralhoImp();
+    private ServicoImpl servicoCallback;
 
-    public BlackJack21RMIImpl() throws RemoteException {
+    public BlackJack21RMIImpl(ServicoImpl servicoCallback) throws RemoteException {
         super();
+        this.servicoCallback = servicoCallback;
     }
 
     @Override
@@ -18,10 +20,15 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
         CartaImp carta = baralho.compra();
         
         if (carta == null) {
-            throw new RemoteException("Baralho vazio, não é possível comprar mais cartas.");
+            String mensagem = "Baralho vazio, não é possível comprar mais cartas.";
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+            throw new RemoteException(mensagem);
         }
         else {
-            System.out.println("Carta comprada: " + carta.toString());
+            String mensagem = "Carta comprada: " + carta.toString();
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
         }
 
         return carta;
@@ -29,6 +36,8 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
 
     @Override
     public void stand() throws RemoteException {
-        System.out.println("Jogador decidiu parar de comprar cartas.");
+        String mensagem = "Jogador decidiu parar de comprar cartas.";
+        System.out.println("[SERVIDOR] " + mensagem);
+        servicoCallback.notificarTodosClientes(mensagem);
     }
 }

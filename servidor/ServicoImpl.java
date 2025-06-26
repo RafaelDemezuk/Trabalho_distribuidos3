@@ -5,6 +5,7 @@ import interfaces.ServicoCallBack;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ServicoImpl extends UnicastRemoteObject implements ServicoCallBack {
@@ -20,5 +21,19 @@ public class ServicoImpl extends UnicastRemoteObject implements ServicoCallBack 
         clientes.add(cliente);
         cliente.notificar("Você foi registrado com sucesso no servidor!");
         System.out.println("[SERVIDOR] Cliente registrado com sucesso.");
+    }
+
+    public void notificarTodosClientes(String mensagem) throws RemoteException {
+        Iterator<ClienteCallBack> iterator = clientes.iterator();
+        while (iterator.hasNext()) {
+            ClienteCallBack cliente = iterator.next();
+            try {
+                cliente.notificar(mensagem);
+                System.out.println("[SERVIDOR] Mensagem enviada via callback: " + mensagem);
+            } catch (RemoteException e) {
+                System.err.println("[SERVIDOR] Erro ao notificar cliente: " + e.getMessage());
+                iterator.remove(); // Remove com segurança usando o iterator
+            }
+        }
     }
 }

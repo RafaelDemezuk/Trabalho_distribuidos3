@@ -10,7 +10,11 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
         super();
     }
 
+    @Override
     public void notificar(String mensagem) throws RemoteException {
-        System.out.println("[CLIENTE CALLBACK] Notificação: " + mensagem);
+        new Thread(() -> {
+            System.out.println("[CLIENTE CALLBACK] Notificação: " + mensagem);
+            System.out.flush();
+        }).start();
     }
 }
