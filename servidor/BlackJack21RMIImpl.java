@@ -62,16 +62,27 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
             for (int i = 0; i < maoCliente.size(); i++) {
                 sb.append(maoCliente.get(i).toString());
                 if (i < maoCliente.size() - 1) {
-                    sb.append(", ");
+                    sb.append("\n");
                 }
             }
 
             int valorTotal = calcularValorMao(maoCliente);
             sb.append("\nValor total da mão: ").append(valorTotal);
-
-            String mensagem = sb.toString();
-            System.out.println("[SERVIDOR] " + mensagem);
-            servicoCallback.notificarTodosClientes(mensagem);
+            if( valorTotal > 21) {
+                sb.append("\nVocê estourou! Valor total: ").append(valorTotal);
+                servicoCallback.notificarTodosClientes(sb.toString());
+                servicoCallback.notificarFimDeJogo();
+                throw new RemoteException("Você estourou! Valor total: " + valorTotal);
+            }else if (valorTotal == 21) {
+                sb.append("\nVocê ganhou! Valor total: ").append(valorTotal);
+                servicoCallback.notificarTodosClientes(sb.toString());
+                throw new RemoteException("Você ganhou! Valor total: " + valorTotal);
+            }else{
+                String mensagem = sb.toString();
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+            }
+            
         }
     }
 
@@ -96,7 +107,7 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
         for (int i = 0; i < maoServidor.size(); i++) {
             sb.append(maoServidor.get(i).toString());
             if (i < maoServidor.size() - 1) {
-                sb.append(", ");
+                sb.append("\n");
             }
         }
 

@@ -54,7 +54,7 @@ public class Cliente implements Runnable {
                                 default:
                                     System.out.println("[CLIENTE] Comando inválido!");
                             }
-                        } while (!comandoJogo.equals("3") && !comandoJogo.equals("VOLTAR"));
+                        } while (!comandoJogo.equals("3") && callBack.getRodada() != 0);
                         break;
 
                     case "2":

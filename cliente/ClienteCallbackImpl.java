@@ -6,6 +6,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteCallBack {
 
+    private int rodada = 1;
+
     protected ClienteCallbackImpl() throws RemoteException {
         super();
     }
@@ -16,5 +18,13 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
             System.out.println("[CLIENTE CALLBACK] Notificação: " + mensagem);
             System.out.flush();
         }).start();
+    }
+
+    public int getRodada() {
+        return rodada;
+    }
+
+    public void fimdejogo() {
+        rodada=0;
     }
 }
