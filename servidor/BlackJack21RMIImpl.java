@@ -107,4 +107,59 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
         System.out.println("[SERVIDOR] " + mensagem);
         servicoCallback.notificarTodosClientes(mensagem);
     }
+
+    @Override
+    public void startGame() throws RemoteException {
+        maoCliente.clear();
+        maoServidor.clear();
+        baralho = new BaralhoImp();
+
+        String mensagem = "O jogo de BlackJack 21 começou!";
+        System.out.println("[SERVIDOR] " + mensagem);
+        servicoCallback.notificarTodosClientes(mensagem);
+
+        try {
+            CartaImp carta = baralho.compra();
+            if (carta == null) {
+                mensagem = "Baralho vazio, não é possível iniciar o jogo.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                throw new RemoteException(mensagem);
+            } else {
+                maoCliente.add(carta);
+            }
+            carta = baralho.compra();
+            if (carta == null) {
+                mensagem = "Baralho vazio, não é possível iniciar o jogo.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                throw new RemoteException(mensagem);
+            } else {
+                maoServidor.add(carta);
+            }
+            carta = baralho.compra();
+            if (carta == null) {
+                mensagem = "Baralho vazio, não é possível iniciar o jogo.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                throw new RemoteException(mensagem);
+            } else {
+                maoCliente.add(carta);
+            }
+            carta = baralho.compra();
+            if (carta == null) {
+                mensagem = "Baralho vazio, não é possível iniciar o jogo.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                throw new RemoteException(mensagem);
+            } else {
+                maoServidor.add(carta);
+            }
+            mensagem = "Cartas iniciais distribuídas\nMão do cliente: " + maoCliente + "\n Mão do servidor: " + maoServidor.get(0) + " e uma carta virada para baixo.";
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+        } catch (RemoteException e) {
+            System.err.println("[SERVIDOR] Erro ao iniciar o jogo: " + e.getMessage());
+        }
+    }
 }

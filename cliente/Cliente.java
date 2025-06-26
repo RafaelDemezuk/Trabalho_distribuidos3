@@ -30,6 +30,7 @@ public class Cliente implements Runnable {
 
                 switch (opcaoInicial) {
                     case "1":
+                        servicoBlackJack.startGame();
                         String comandoJogo;
                         do {
                             System.out.println("-".repeat(10) + "Menu do Jogo" + "-".repeat(10));
