@@ -7,6 +7,7 @@ public class CartaImp implements Carta, Serializable {
     private String naipe;
     private int valor;
     private String simbolo;
+
     public CartaImp(String naipe, int valor, String simbolo) {
         this.naipe = naipe;
         this.valor = valor;
@@ -26,5 +27,14 @@ public class CartaImp implements Carta, Serializable {
     @Override
     public String getSimbolo() {
         return simbolo;
+    }
+
+    @Override
+    public String toString() {
+        return "Carta{" +
+                "naipe='" + naipe + '\'' +
+                ", valor=" + valor +
+                ", simbolo='" + simbolo + '\'' +
+                '}';
     }
 }
