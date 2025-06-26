@@ -5,38 +5,105 @@ import entidades.CartaImp;
 import interfaces.BlackJack21;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack21 {
-    BaralhoImp baralho = new BaralhoImp();
     private ServicoImpl servicoCallback;
+    private BaralhoImp baralho = new BaralhoImp();
+    private List<CartaImp> maoCliente = new ArrayList<>();
+    private List<CartaImp> maoServidor = new ArrayList<>();
 
     public BlackJack21RMIImpl(ServicoImpl servicoCallback) throws RemoteException {
         super();
         this.servicoCallback = servicoCallback;
     }
 
+    private int calcularValorMao(List<CartaImp> mao) {
+        int valor = 0;
+        int ases = 0;
+
+        for (CartaImp carta : mao) {
+            int valorCarta = carta.getValor();
+            if (valorCarta == 1) {
+                ases++;
+                valor += 11;
+            } else if (valorCarta > 10) {
+                valor += 10;
+            } else {
+                valor += valorCarta;
+            }
+        }
+
+        while (valor > 21 && ases > 0) {
+            valor -= 10;
+            ases--;
+        }
+
+        return valor;
+    }
+
     @Override
-    public CartaImp hit() throws RemoteException {
+    public void hit() throws RemoteException {
         CartaImp carta = baralho.compra();
-        
+
         if (carta == null) {
-            String mensagem = "Baralho vazio, não é possível comprar mais cartas.";
+            String mensagem = "Baralho vazio, cliente não consegue comprar mais cartas.";
             System.out.println("[SERVIDOR] " + mensagem);
             servicoCallback.notificarTodosClientes(mensagem);
             throw new RemoteException(mensagem);
-        }
-        else {
-            String mensagem = "Carta comprada: " + carta.toString();
+        } else {
+            maoCliente.add(carta);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Carta comprada: ").append(carta.toString()).append("\n");
+            sb.append("Mão atual do jogador: ");
+
+            for (int i = 0; i < maoCliente.size(); i++) {
+                sb.append(maoCliente.get(i).toString());
+                if (i < maoCliente.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+
+            int valorTotal = calcularValorMao(maoCliente);
+            sb.append("\nValor total da mão: ").append(valorTotal);
+
+            String mensagem = sb.toString();
             System.out.println("[SERVIDOR] " + mensagem);
             servicoCallback.notificarTodosClientes(mensagem);
         }
-
-        return carta;
     }
 
     @Override
     public void stand() throws RemoteException {
-        String mensagem = "Jogador decidiu parar de comprar cartas.";
+        do {
+            CartaImp carta = baralho.compra();
+
+            if (carta == null) {
+                String mensagem = "Baralho vazio, a mesa não consegue comprar mais cartas.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                throw new RemoteException(mensagem);
+            } else {
+                maoServidor.add(carta);
+            }
+        } while (calcularValorMao(maoServidor) < 17);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Mão do servidor: ");
+
+        for (int i = 0; i < maoServidor.size(); i++) {
+            sb.append(maoServidor.get(i).toString());
+            if (i < maoServidor.size() - 1) {
+                sb.append(", ");
+            }
+        }
+
+        int valorTotalServidor = calcularValorMao(maoServidor);
+        sb.append("\nValor total da mão do servidor: ").append(valorTotalServidor);
+
+        String mensagem = sb.toString();
         System.out.println("[SERVIDOR] " + mensagem);
         servicoCallback.notificarTodosClientes(mensagem);
     }
