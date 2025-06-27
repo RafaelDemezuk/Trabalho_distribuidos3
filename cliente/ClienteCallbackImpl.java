@@ -27,4 +27,8 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
     public void fimdejogo() {
         rodada=0;
     }
+
+    public void iniciodejogo() {
+        rodada=1;
+    }
 }

@@ -48,4 +48,15 @@ public class ServicoImpl extends UnicastRemoteObject implements ServicoCallBack 
         }
     }
 
+    public void notificarInicioDeJogo() throws RemoteException {
+        for (ClienteCallBack cliente : clientes) {
+            try {
+                cliente.iniciodejogo();
+                System.out.println("[SERVIDOR] Notificação de início de jogo enviada.");
+            } catch (RemoteException e) {
+                System.err.println("[SERVIDOR] Erro ao notificar início de jogo: " + e.getMessage());
+            }
+        }
+    }
+
 }

@@ -124,7 +124,7 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
         maoCliente.clear();
         maoServidor.clear();
         baralho = new BaralhoImp();
-
+        servicoCallback.notificarInicioDeJogo();
         String mensagem = "O jogo de BlackJack 21 começou!";
         System.out.println("[SERVIDOR] " + mensagem);
         servicoCallback.notificarTodosClientes(mensagem);
