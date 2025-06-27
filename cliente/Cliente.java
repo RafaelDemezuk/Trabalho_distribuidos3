@@ -31,8 +31,8 @@ public class Cliente implements Runnable {
                 switch (opcaoInicial) {
                     case "1":
                         servicoBlackJack.startGame();
-                        String comandoJogo;
-                        do {
+                        String comandoJogo ="";
+                        while (!comandoJogo.equals("3") && callBack.getRodada() != 0){
                             System.out.println("-".repeat(10) + "Menu do Jogo" + "-".repeat(10));
                             System.out.println("\n[1] HIT\n[2] STAND\n[3] VOLTAR AO MENU PRINCIPAL\n" + "-".repeat(10));
                             comandoJogo = scanner.nextLine().trim().toUpperCase();
@@ -54,7 +54,7 @@ public class Cliente implements Runnable {
                                 default:
                                     System.out.println("[CLIENTE] Comando inválido!");
                             }
-                        } while (!comandoJogo.equals("3") && callBack.getRodada() != 0);
+                        } ;
                         break;
 
                     case "2":

@@ -19,16 +19,16 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
             System.out.flush();
         }).start();
     }
-
-    public int getRodada() {
+    @Override
+    public int getRodada()  throws RemoteException {
         return rodada;
     }
-
-    public void fimdejogo() {
+    @Override
+    public void fimdejogo()  throws RemoteException {
         rodada=0;
     }
-
-    public void iniciodejogo() {
+    @Override
+    public void iniciodejogo()  throws RemoteException {
         rodada=1;
     }
 }

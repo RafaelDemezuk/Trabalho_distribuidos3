@@ -73,10 +73,6 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
                 servicoCallback.notificarTodosClientes(sb.toString());
                 servicoCallback.notificarFimDeJogo();
                 throw new RemoteException("Você estourou! Valor total: " + valorTotal);
-            }else if (valorTotal == 21) {
-                sb.append("\nVocê ganhou! Valor total: ").append(valorTotal);
-                servicoCallback.notificarTodosClientes(sb.toString());
-                throw new RemoteException("Você ganhou! Valor total: " + valorTotal);
             }else{
                 String mensagem = sb.toString();
                 System.out.println("[SERVIDOR] " + mensagem);
@@ -88,7 +84,7 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
 
     @Override
     public void stand() throws RemoteException {
-        do {
+        while (calcularValorMao(maoServidor) < 17) {
             CartaImp carta = baralho.compra();
 
             if (carta == null) {
@@ -99,7 +95,7 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
             } else {
                 maoServidor.add(carta);
             }
-        } while (calcularValorMao(maoServidor) < 17);
+        } ;
 
         StringBuilder sb = new StringBuilder();
         sb.append("Mão do servidor: ");
@@ -117,6 +113,26 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
         String mensagem = sb.toString();
         System.out.println("[SERVIDOR] " + mensagem);
         servicoCallback.notificarTodosClientes(mensagem);
+
+        int valorTotalCliente = calcularValorMao(maoCliente);
+        if (valorTotalServidor > 21) {
+            mensagem = "O servidor estourou! Você ganhou com valor total: " + valorTotalCliente;
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+        } else if (valorTotalServidor == valorTotalCliente) {
+            mensagem = "Empate! no caso de empate vitoria do servidor Valor total: " + valorTotalCliente;
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+        } else if (valorTotalServidor > valorTotalCliente) {
+            mensagem = "O servidor ganhou com valor total: " + valorTotalServidor;
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+        } else {
+            mensagem = "Você ganhou com valor total: " + valorTotalCliente;
+            System.out.println("[SERVIDOR] " + mensagem);
+            servicoCallback.notificarTodosClientes(mensagem);
+        }
+        servicoCallback.notificarFimDeJogo();
     }
 
     @Override
@@ -166,9 +182,23 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
             } else {
                 maoServidor.add(carta);
             }
-            mensagem = "Cartas iniciais distribuídas\nMão do cliente: " + maoCliente + "\n Mão do servidor: " + maoServidor.get(0) + " e uma carta virada para baixo.";
+            mensagem = "Cartas iniciais distribuídas\nMão do cliente: \n" + maoCliente.get(0)+"\n"+maoCliente.get(1)+ "\n Mão do servidor: \n" + maoServidor.get(0) + " \ne uma carta virada para baixo.";
             System.out.println("[SERVIDOR] " + mensagem);
             servicoCallback.notificarTodosClientes(mensagem);
+            if(calcularValorMao(maoCliente) == 21) {
+                servicoCallback.notificarFimDeJogo();
+                
+                mensagem = "BlackJack! Você ganhou com as cartas iniciais!";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
+                
+
+            }
+            else if(calcularValorMao(maoServidor) == 21) {
+                servicoCallback.notificarFimDeJogo();
+                servicoCallback.notificarFimDeJogo();
+            }
+                
         } catch (RemoteException e) {
             System.err.println("[SERVIDOR] Erro ao iniciar o jogo: " + e.getMessage());
         }
