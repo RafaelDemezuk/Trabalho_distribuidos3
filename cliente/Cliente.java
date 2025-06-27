@@ -31,8 +31,8 @@ public class Cliente implements Runnable {
                 switch (opcaoInicial) {
                     case "1":
                         servicoBlackJack.startGame();
-                        String comandoJogo ="";
-                        while (!comandoJogo.equals("3") && callBack.getRodada() != 0){
+                        String comandoJogo = "";
+                        while (!comandoJogo.equals("3") && callBack.getRodada() != 0) {
                             System.out.println("-".repeat(10) + "Menu do Jogo" + "-".repeat(10));
                             System.out.println("\n[1] HIT\n[2] STAND\n[3] VOLTAR AO MENU PRINCIPAL\n" + "-".repeat(10));
                             comandoJogo = scanner.nextLine().trim().toUpperCase();
@@ -54,23 +54,35 @@ public class Cliente implements Runnable {
                                 default:
                                     System.out.println("[CLIENTE] Comando inválido!");
                             }
-                        } ;
+                        }
+                        ;
                         break;
 
                     case "2":
-                        System.out.println("[CLIENTE] Saindo...");
+                        System.out.println("[CLIENTE] Desconectando do servidor...");
+                        try {
+                            // Desregistrar o callback antes de sair
+                            servico.desregistrarCallBack(callBack);
+                        } catch (Exception e) {
+                            System.err.println("[CLIENTE] Erro ao desregistrar callback: " + e.getMessage());
+                        }
+                        System.out.println("[CLIENTE] Encerrando aplicação...");
                         break;
 
                     default:
                         System.out.println("[CLIENTE] Opção inválida!");
                 }
-            } while (!opcaoInicial.equals("2") && !opcaoInicial.equals("SAIR"));
+            } while (!opcaoInicial.equals("2"));
 
             scanner.close();
+
+            // Forçar o encerramento da aplicação
+            System.exit(0);
 
         } catch (Exception e) {
             System.err.println("[CLIENTE] Exceção no cliente: " + e.getMessage());
             e.printStackTrace();
+            System.exit(1);
         }
     }
 

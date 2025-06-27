@@ -56,29 +56,22 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
             maoCliente.add(carta);
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Carta comprada: ").append(carta.toString()).append("\n");
-            sb.append("Mão atual do jogador: ");
-
-            for (int i = 0; i < maoCliente.size(); i++) {
-                sb.append(maoCliente.get(i).toString());
-                if (i < maoCliente.size() - 1) {
-                    sb.append("\n");
-                }
-            }
-
+            sb.append("Mão atual do jogador: \n");
+            sb.append(CartaImp.imprimirCartasLadoALado(maoCliente));
             int valorTotal = calcularValorMao(maoCliente);
             sb.append("\nValor total da mão: ").append(valorTotal);
-            if( valorTotal > 21) {
+
+            if (valorTotal > 21) {
                 sb.append("\nVocê estourou! Valor total: ").append(valorTotal);
                 servicoCallback.notificarTodosClientes(sb.toString());
                 servicoCallback.notificarFimDeJogo();
                 throw new RemoteException("Você estourou! Valor total: " + valorTotal);
-            }else{
+            } else {
                 String mensagem = sb.toString();
                 System.out.println("[SERVIDOR] " + mensagem);
                 servicoCallback.notificarTodosClientes(mensagem);
             }
-            
+
         }
     }
 
@@ -91,22 +84,17 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
                 String mensagem = "Baralho vazio, a mesa não consegue comprar mais cartas.";
                 System.out.println("[SERVIDOR] " + mensagem);
                 servicoCallback.notificarTodosClientes(mensagem);
+
                 throw new RemoteException(mensagem);
             } else {
                 maoServidor.add(carta);
             }
-        } ;
+        }
+        ;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Mão do servidor: ");
-
-        for (int i = 0; i < maoServidor.size(); i++) {
-            sb.append(maoServidor.get(i).toString());
-            if (i < maoServidor.size() - 1) {
-                sb.append("\n");
-            }
-        }
-
+        sb.append("Mão do servidor: \n");
+        sb.append(CartaImp.imprimirCartasLadoALado(maoServidor));
         int valorTotalServidor = calcularValorMao(maoServidor);
         sb.append("\nValor total da mão do servidor: ").append(valorTotalServidor);
 
@@ -182,25 +170,41 @@ public class BlackJack21RMIImpl extends UnicastRemoteObject implements BlackJack
             } else {
                 maoServidor.add(carta);
             }
-            mensagem = "Cartas iniciais distribuídas\nMão do cliente: \n" + maoCliente.get(0)+"\n"+maoCliente.get(1)+ "\n Mão do servidor: \n" + maoServidor.get(0) + " \ne uma carta virada para baixo.";
+
+            // Mostrar as cartas do cliente
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== SUAS CARTAS ===\n");
+            sb.append(CartaImp.imprimirCartasLadoALado(maoCliente));
+            int valorTotalCliente = calcularValorMao(maoCliente);
+            sb.append("Valor total da sua mão: ").append(valorTotalCliente).append("\n\n");
+
+            // Mostrar apenas a primeira carta do servidor
+            sb.append("=== CARTAS DO SERVIDOR ===\n");
+            List<CartaImp> cartaVisivel = new ArrayList<>();
+            cartaVisivel.add(maoServidor.get(0)); 
+            sb.append(CartaImp.imprimirCartasLadoALado(cartaVisivel));
+
+            sb.append("┌─────────┐\n");
+            sb.append("│░░░░░░░░░│\n");
+            sb.append("│░░░░░░░░░│\n");
+            sb.append("│░░░░░░░░░│\n");
+            sb.append("│░░░░░░░░░│\n");
+            sb.append("│░░░░░░░░░│\n");
+            sb.append("└─────────┘\n");
+
+            mensagem = sb.toString();
             System.out.println("[SERVIDOR] " + mensagem);
             servicoCallback.notificarTodosClientes(mensagem);
-            if(calcularValorMao(maoCliente) == 21) {
+
+            if (valorTotalCliente == 21) {
                 servicoCallback.notificarFimDeJogo();
-                
+
                 mensagem = "BlackJack! Você ganhou com as cartas iniciais!";
                 System.out.println("[SERVIDOR] " + mensagem);
                 servicoCallback.notificarTodosClientes(mensagem);
-                
-
-            }
-            else if(calcularValorMao(maoServidor) == 21) {
+            } else if (calcularValorMao(maoServidor) == 21) {
+                mensagem = "O servidor tem BlackJack! Você perdeu.";
+                System.out.println("[SERVIDOR] " + mensagem);
+                servicoCallback.notificarTodosClientes(mensagem);
                 servicoCallback.notificarFimDeJogo();
-                servicoCallback.notificarFimDeJogo();
-            }
-                
-        } catch (RemoteException e) {
-            System.err.println("[SERVIDOR] Erro ao iniciar o jogo: " + e.getMessage());
-        }
-    }
-}
+1

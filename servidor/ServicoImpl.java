@@ -23,6 +23,14 @@ public class ServicoImpl extends UnicastRemoteObject implements ServicoCallBack 
         System.out.println("[SERVIDOR] Cliente registrado com sucesso.");
     }
 
+    @Override
+    public void desregistrarCallBack(ClienteCallBack cliente) throws RemoteException {
+        System.out.println("[SERVIDOR] Desregistrando cliente callback...");
+        cliente.notificar("Você foi desregistrado do servidor.");
+        clientes.remove(cliente);
+        System.out.println("[SERVIDOR] Cliente desregistrado com sucesso.");
+    }
+
     public void notificarTodosClientes(String mensagem) throws RemoteException {
         Iterator<ClienteCallBack> iterator = clientes.iterator();
         while (iterator.hasNext()) {
