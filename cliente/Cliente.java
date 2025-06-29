@@ -8,6 +8,8 @@ import java.rmi.registry.Registry;
 import java.util.Scanner;
 
 public class Cliente implements Runnable {
+    
+    private String nomeJogador;
 
     @Override
     public void run() {
@@ -15,81 +17,101 @@ public class Cliente implements Runnable {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
 
             ServicoCallBack servico = (ServicoCallBack) registry.lookup("ServidorCallBack");
+            BlackJack21 servicoBlackJack = (BlackJack21) registry.lookup("21");
+            
+            Scanner scanner = new Scanner(System.in);
+            
+            System.out.println("=== BEM-VINDO AO BLACKJACK 21 ===");
+            System.out.print("Digite seu nome: ");
+            nomeJogador = scanner.nextLine().trim();
+            
+            while (nomeJogador.isEmpty()) {
+                System.out.print("Nome não pode estar vazio. Digite seu nome: ");
+                nomeJogador = scanner.nextLine().trim();
+            }
+
             ClienteCallBack callBack = new ClienteCallbackImpl();
+            callBack.setNomeJogador(nomeJogador);
             servico.registrarCallBack(callBack);
 
-            BlackJack21 servicoBlackJack = (BlackJack21) registry.lookup("21");
-
-            Scanner scanner = new Scanner(System.in);
             String opcaoInicial;
 
             do {
-                System.out.println("-".repeat(10) + "Menu Principal" + "-".repeat(10));
-                System.out.println("\n[1] JOGAR \n[2] SAIR \n" + "-".repeat(10));
-                opcaoInicial = scanner.nextLine().trim().toUpperCase();
+                System.out.println("\n" + "=".repeat(30));
+                System.out.println("JOGADOR: " + nomeJogador.toUpperCase());
+                System.out.println("=".repeat(30));
+                System.out.println("[1] JOGAR BLACKJACK");
+                System.out.println("[2] SAIR");
+                System.out.println("=".repeat(30));
+                System.out.print("Escolha uma opção: ");
+                opcaoInicial = scanner.nextLine().trim();
 
                 switch (opcaoInicial) {
                     case "1":
-                        servicoBlackJack.startGame();
+                        servicoBlackJack.startGame(nomeJogador);
                         String comandoJogo = "";
                         while (!comandoJogo.equals("3") && callBack.getRodada() != 0) {
-                            System.out.println("-".repeat(10) + "Menu do Jogo" + "-".repeat(10));
-                            System.out.println("\n[1] HIT\n[2] STAND\n[3] VOLTAR AO MENU PRINCIPAL\n" + "-".repeat(10));
-                            comandoJogo = scanner.nextLine().trim().toUpperCase();
+                            System.out.println("\n" + "-".repeat(25));
+                            System.out.println("MENU DO JOGO - " + nomeJogador.toUpperCase());
+                            System.out.println("-".repeat(25));
+                            System.out.println("[1] HIT (Comprar carta)");
+                            System.out.println("[2] STAND (Parar)");
+                            System.out.println("[3] VOLTAR AO MENU");
+                            System.out.println("-".repeat(25));
+                            System.out.print("Escolha uma opção: ");
+                            comandoJogo = scanner.nextLine().trim();
 
                             switch (comandoJogo) {
                                 case "1":
                                     try {
-                                        servicoBlackJack.hit();
+                                        servicoBlackJack.hit(nomeJogador);
                                     } catch (Exception e) {
-                                        System.err.println("[CLIENTE] Erro ao comprar carta: " + e.getMessage());
+                                        System.err.println("[ERRO] " + e.getMessage());
                                     }
                                     break;
                                 case "2":
-                                    servicoBlackJack.stand();
+                                    try {
+                                        servicoBlackJack.stand(nomeJogador);
+                                    } catch (Exception e) {
+                                        System.err.println("[ERRO] " + e.getMessage());
+                                    }
                                     break;
                                 case "3":
-                                    System.out.println("[CLIENTE] Voltando ao menu principal...");
+                                    System.out.println("Voltando ao menu principal...");
                                     break;
                                 default:
-                                    System.out.println("[CLIENTE] Comando inválido!");
+                                    System.out.println("Opção inválida! Tente novamente.");
                             }
                         }
-                        ;
                         break;
 
                     case "2":
-                        System.out.println("[CLIENTE] Desconectando do servidor...");
+                        System.out.println("Desconectando do servidor...");
                         try {
-                            // Desregistrar o callback antes de sair
                             servico.desregistrarCallBack(callBack);
                         } catch (Exception e) {
-                            System.err.println("[CLIENTE] Erro ao desregistrar callback: " + e.getMessage());
+                            System.err.println("Erro ao desregistrar: " + e.getMessage());
                         }
-                        System.out.println("[CLIENTE] Encerrando aplicação...");
+                        System.out.println("Tchau, " + nomeJogador + "!");
                         break;
 
                     default:
-                        System.out.println("[CLIENTE] Opção inválida!");
+                        System.out.println("Opção inválida! Tente novamente.");
                 }
             } while (!opcaoInicial.equals("2"));
 
             scanner.close();
-
-            // Forçar o encerramento da aplicação
             System.exit(0);
 
         } catch (Exception e) {
-            System.err.println("[CLIENTE] Exceção no cliente: " + e.getMessage());
+            System.err.println("Erro no cliente: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1; i++) {
-            Thread t = new Thread(new Cliente());
-            t.start();
-        }
+        Thread cliente = new Thread(new Cliente());
+        cliente.start();
     }
 }

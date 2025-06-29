@@ -8,4 +8,6 @@ public interface ClienteCallBack extends Remote {
     int getRodada() throws RemoteException;
     void fimdejogo() throws RemoteException;
     void iniciodejogo() throws RemoteException;
+    String getNomeJogador() throws RemoteException;
+    void setNomeJogador(String nome) throws RemoteException;
 }
